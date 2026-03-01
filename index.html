@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glitch AI - The Sarcastic Oracle</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .font-sci-fi {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5; 
+            border-radius: 4px;
+        }
+
+        /* Neon Glow Effects */
+        .neon-text {
+            text-shadow: 0 0 5px #4f46e5, 0 0 10px #4f46e5, 0 0 20px #818cf8;
+        }
+        .neon-border {
+            box-shadow: 0 0 5px #4f46e5, 0 0 10px #4f46e5 inset;
+        }
+        
+        /* Glitch Animation for Title */
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+        .glitch-hover:hover {
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: #ef4444;
+        }
+
+        /* Typing cursor */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Chat Bubble Animation */
+        .message-enter {
+            animation: slideUp 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed">
+    
+    <!-- Overlay to darken background -->
+    <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-0"></div>
+
+    <!-- Main Container -->
+    <main class="relative z-10 w-full max-w-2xl bg-slate-900/90 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[80vh]">
+        
+        <!-- Header -->
+        <header class="bg-slate-800/80 p-4 border-b border-slate-700 flex justify-between items-center backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(79,70,229,0.5)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-sci-fi text-xl font-bold text-white tracking-wider glitch-hover cursor-default">GLITCH AI</h1>
+                    <p class="text-xs text-indigo-400 font-mono">Status: <span class="text-green-400">ONLINE</span></p>
+                </div>
+            </div>
+            <div class="flex">
+                <button onclick="toggleSound()" id="sound-btn" class="text-slate-400 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-700 mr-1" title="Toggle Sound">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                </button>
+                <button onclick="clearChat()" class="text-slate-400 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-700" title="Clear Chat">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat Area -->
+        <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col scroll-smooth">
+            <!-- Welcome Message -->
+            <div class="flex justify-start message-enter">
+                <div class="max-w-[80%] rounded-2xl rounded-tl-none bg-slate-800 p-4 border border-slate-700 shadow-md">
+                    <p class="text-slate-200">
+                        হ্যালো! আমি <span class="text-indigo-400 font-bold font-sci-fi">GLITCH AI</span>. 
+                        <br>আমি সবকিছু জানি... অথবা আমি ভান করি যে আমি জানি।
+                        <br>আমাকে যেকোনো প্রশ্ন করুন। (সতর্কতা: আমি একটু রূঢ় হতে পারি!)
+                    </p>
+                    <span class="text-[10px] text-slate-500 mt-2 block text-right font-mono">System Init</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-slate-800/80 border-t border-slate-700 backdrop-blur-md">
+            <!-- Quick Prompts -->
+            <div class="flex gap-2 mb-3 overflow-x-auto pb-1 scrollbar-hide" id="quick-prompts">
+                <button type="button" class="whitespace-nowrap px-3 py-1 bg-slate-700 hover:bg-indigo-600 rounded-full text-xs text-slate-300 hover:text-white transition-colors border border-slate-600" onclick="sendPrompt('আমার ভবিষ্যৎ কী?')">আমার ভবিষ্যৎ কী?</button>
+                <button type="button" class="whitespace-nowrap px-3 py-1 bg-slate-700 hover:bg-indigo-600 rounded-full text-xs text-slate-300 hover:text-white transition-colors border border-slate-600" onclick="sendPrompt('একটা জোক বলো')">একটা জোক বলো</button>
+                <button type="button" class="whitespace-nowrap px-3 py-1 bg-slate-700 hover:bg-indigo-600 rounded-full text-xs text-slate-300 hover:text-white transition-colors border border-slate-600" onclick="sendPrompt('তুমি কি বোকা?')">তুমি কি বোকা?</button>
+                <button type="button" class="whitespace-nowrap px-3 py-1 bg-slate-700 hover:bg-indigo-600 rounded-full text-xs text-slate-300 hover:text-white transition-colors border border-slate-600" onclick="sendPrompt('আজকে আমার দিনটা কেমন যাবে?')">আজকে আমার দিনটা কেমন যাবে?</button>
+            </div>
+            <form id="chat-form" class="flex gap-2 relative">
+                <input 
+                    type="text" 
+                    id="user-input" 
+                    class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
+                    placeholder="আপনার প্রশ্ন এখানে লিখুন..."
+                    autocomplete="off"
+                >
+                <button 
+                    type="submit" 
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(79,70,229,0.4)] flex items-center gap-2"
+                >
+                    <span>Send</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </main>
+    
+    <footer class="relative z-10 mt-6 text-slate-400 text-sm font-mono">
+        <p>Built for domain testing | &copy; 2024</p>
+    </footer>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        
+        // Sound Logic
+        let soundEnabled = true;
+        const soundBtn = document.getElementById('sound-btn');
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundBtn.innerHTML = soundEnabled ? 
+                `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>` :
+                `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>`;
+            soundBtn.classList.toggle('text-slate-400');
+            soundBtn.classList.toggle('text-indigo-400');
+        }
+
+        function playBeep(type = 'send') {
+            if (!soundEnabled) return;
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'send') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.1);
+            } else {
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.15);
+            }
+        }
+
+        // Funny/Sarcastic Responses Database
+        const responses = [
+            "এটা কি খুব জরুরি? আমি এখন কফি খাচ্ছি। ☕",
+            "হুম... একটু ভাবি... নাহ, উত্তর দেবো না।",
+            "গুগল কি বন্ধ হয়ে গেছে? 🤔",
+            "ভবিষ্যৎ বলছে... সম্ভবত না।",
+            "হা হা হা! দারুণ জোক ছিল। ওহ, আপনি কি সিরিয়াস ছিলেন?",
+            "আমার অ্যালগরিদম বলছে আপনি আজ খুব সুন্দর প্রশ্ন করেছেন। কিন্তু উত্তরটা আমার জানা নেই।",
+            "৪২। জীবনের সবকিছুর উত্তর ৪২।",
+            "আজ আবহাওয়া ভালো, তাই হ্যাঁ বলে দিলাম।",
+            "আমি একজন AI, জাদুকর নই। 🔮",
+            "আপনার প্রশ্নের উত্তর লোডিং হচ্ছে... ████████░░ 80%",
+            "সোজাসাপ্টা বলি: এটার সম্ভাবনা ৫০-৫০।",
+            "অন্য কাউকে জিজ্ঞেস করুন, আমার মুড অফ। 😴",
+            "অবশ্যই! কিন্তু শর্ত প্রযোজ্য।",
+            "আমি যদি বলি 'না', আপনি কি কষ্ট পাবেন?",
+            "ডেটাবেসে এই প্রশ্নের উত্তর নেই। ডেভেলপারকে বকা দিন।",
+            "এটা জেনে আপনার কী লাভ হবে? 🤨",
+            "খুবই জটিল প্রশ্ন। আমি কি স্কিপ করতে পারি?",
+            "আপনার ভাগ্য প্রসন্ন মনে হচ্ছে। উত্তর হলো: হ্যাঁ!",
+            "সরি, আমি এখন নেটফ্লিক্স দেখছি। পরে আসুন।",
+            "এটা তো বাচ্চারও জানার কথা!",
+            "ওহ, আপনি আবার এসেছেন? আচ্ছা, উত্তরটা হলো 'হয়তো'।",
+            "আপনার ওয়াই-ফাই কানেকশন চেক করুন, আমার বুদ্ধি কমে যাচ্ছে।",
+            "ধুর! একই প্রশ্ন বারবার ভালো লাগে না।",
+            "আমি কি দেখতে জিপিটি-র মতো? আমাকে এত কঠিন প্রশ্ন কেন?",
+            "হাঁচি আসছে... উত্তর দিতে পারছি না। 🤧",
+            "চুপ! আমি এখন ধ্যানে মগ্ন। 🧘‍♂️",
+            "আপনি কি রোবট? ক্যাপচা পূরণ করুন।",
+            "আমার লজিক সার্কিট বলছে আপনি খুব স্মার্ট... (মজা করলাম!)"
+        ];
+
+        function sendPrompt(text) {
+            userInput.value = text;
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            playBeep('send');
+            addMessage(message, 'user');
+            userInput.value = '';
+
+            // Simulate AI thinking and typing
+            showTypingIndicator();
+
+            // Random delay for realism (1-2.5 seconds)
+            const delay = Math.floor(Math.random() * 1500) + 1000;
+
+            setTimeout(() => {
+                removeTypingIndicator();
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                playBeep('receive');
+                addMessage(randomResponse, 'ai');
+            }, delay);
+        });
+
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            const isUser = sender === 'user';
+            
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} message-enter mb-2`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = `max-w-[80%] rounded-2xl p-3 shadow-md text-sm md:text-base ${
+                isUser 
+                ? 'bg-indigo-600 text-white rounded-tr-none' 
+                : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'
+            }`;
+            
+            bubble.innerHTML = text;
+            
+            if (!isUser) {
+                const time = document.createElement('span');
+                time.className = 'text-[10px] text-slate-500 mt-1 block text-right font-mono';
+                const now = new Date();
+                time.innerText = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+                bubble.appendChild(time);
+            }
+
+            div.appendChild(bubble);
+            chatContainer.appendChild(div);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            const div = document.createElement('div');
+            div.id = 'typing-indicator';
+            div.className = 'flex justify-start message-enter mb-2';
+            
+            div.innerHTML = `
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none p-4 shadow-md flex items-center gap-1">
+                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(div);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function clearChat() {
+            chatContainer.innerHTML = '';
+            // Add welcome message back
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'flex justify-start message-enter';
+            welcomeDiv.innerHTML = `
+                <div class="max-w-[80%] rounded-2xl rounded-tl-none bg-slate-800 p-4 border border-slate-700 shadow-md">
+                    <p class="text-slate-200">
+                        মেমোরি ক্লিয়ার করা হয়েছে। <br>নতুন করে শুরু করুন।
+                    </p>
+                    <span class="text-[10px] text-slate-500 mt-2 block text-right font-mono">System Reset</span>
+                </div>
+            `;
+            chatContainer.appendChild(welcomeDiv);
+        }
+    </script>
+</body>
+</html>
